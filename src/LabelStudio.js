@@ -37,7 +37,9 @@ export class LabelStudio {
     this.root = root;
     this.events = new EventInvoker();
     this.options = options ?? {};
-    this.destroy = (() => { /* noop */ });
+    this.destroy = () => {
+      /* noop */
+    };
 
     this.supportLgacyEvents(options);
     this.createApp();
@@ -58,7 +60,66 @@ export class LabelStudio {
   }
 
   async createApp() {
-    const { store, getRoot } = await configureStore(this.options, this.events);
+    const options = {
+      interfaces: [
+        'panel',
+        'update',
+        'submit',
+        'skip',
+        'controls',
+        'infobar',
+        'topbar',
+        'instruction',
+        'annotations:history',
+        'annotations:tabs',
+        'annotations:menu',
+        'annotations:current',
+        'predictions:tabs',
+        'predictions:menu',
+        'edit-history',
+      ],
+      task: {
+        annotations: [
+          {
+            annotated_at: null,
+            annotation_notes: null,
+            annotation_source: 0,
+            annotation_status: 'unlabeled',
+            annotation_type: 1,
+            completed_by: 1,
+            created_at: '2024-02-02T10:36:24.206546Z',
+            id: 2,
+            lead_time: 0,
+            parent_annotation: null,
+            result: [],
+            review_notes: null,
+            supercheck_notes: null,
+            task: 7,
+            updated_at: '2024-02-02T10:36:24.206560Z',
+          },
+        ],
+        data: {
+          context: 'The statement you provided is a general medical context',
+          input_language: 'English',
+          input_text:
+            'Abdominal pain, also known as a stomach ache, is a symptom associated with both non-serious and serious medical issues.',
+          machine_translation:
+            'पेट दर्द, जिसे पेट दर्द के रूप में भी जाना जाता है, गैर-गंभीर और गंभीर चिकित्सा समस्याओं दोनों से जुड़ा एक लक्षण है।',
+          output_language: 'Hindi',
+          word_count: 17,
+        },
+        id: 7,
+        predictions: [],
+      },
+      user: {
+        firstName: '',
+        lastName: '',
+        id: 1,
+      },
+    };
+
+    console.log('this.options, this.events => ', this.options, options);
+    const { store, getRoot } = await configureStore(options, this.events);
     const rootElement = getRoot(this.root);
 
     this.store = store;
@@ -67,15 +128,11 @@ export class LabelStudio {
     const isRendered = false;
 
     const renderApp = () => {
+      console.log('rendered!!');
       if (isRendered) {
         clearRenderedApp();
       }
-      render((
-        <App
-          store={this.store}
-          panels={registerPanels(this.options.panels) ?? []}
-        />
-      ), rootElement);
+      render(<App store={this.store} panels={registerPanels(this.options.panels) ?? []} />, rootElement);
     };
 
     const clearRenderedApp = () => {

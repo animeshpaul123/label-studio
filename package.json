@@ -1,16 +1,16 @@
 {
-  "name": "@heartexlabs/label-studio",
-  "version": "1.4.0",
+  "name": "@animeshpaul/label-studio",
+  "version": "0.0.1",
   "description": "Data Labeling Tool that is backend agnostic and can be embedded into your applications",
   "homepage": "https://labelstud.io",
   "author": {
-    "name": "Heartex Labs",
-    "url": "https://github.com/heartexlabs"
+    "name": "Animesh Paul",
+    "url": "https://github.com/animeshpaul123"
   },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/heartexlabs/label-studio-frontend.git"
+    "url": "git@github.com:animeshpaul123/label-studio.git"
   },
   "browser": "build/static/js/main.js",
   "main": "build/static/js/main.js",
@@ -30,8 +30,7 @@
     "build-notsourcemap": "GENERATE_SOURCEMAP=false yarn run build",
     "build:final": "BUILD_NO_CHUNKS=true yarn run build",
     "build:no-hash": "BUILD_NO_HASH=true BUILD_NO_CHUNKS=true yarn run build",
-    "build:module": "BUILD_MODULE=true yarn run build:no-hash",
-    "build": "webpack",
+    "build": "BUILD_MODULE=true yarn run build:no-hash",
     "watch": "webpack --watch",
     "copy-examples": "bash scripts/copy.sh",
     "docs:generate": "node scripts/create-docs.js",
