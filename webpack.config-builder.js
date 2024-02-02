@@ -7,6 +7,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const { EnvironmentPlugin } = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const workingDirectory = process.env.WORK_DIR
   ? path.resolve(__dirname, process.env.WORK_DIR)
@@ -155,6 +156,9 @@ const babelLoader = {
       '@babel/plugin-proposal-optional-chaining',
       '@babel/plugin-proposal-nullish-coalescing-operator',
       ...(isTest ? ['istanbul'] : []),
+      new CopyWebpackPlugin({
+        patterns: [{ from: 'scripts', to: 'scripts' }],
+      }),
     ],
     ...babelOptimizeOptions(),
   },
