@@ -1,27 +1,27 @@
-const path = require("path");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const HtmlWebPackPlugin = require("html-webpack-plugin");
-const webpack = require("webpack");
-const Dotenv = require("dotenv-webpack");
-const TerserPlugin = require("terser-webpack-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
-const { EnvironmentPlugin } = require("webpack");
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const Dotenv = require('dotenv-webpack');
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+const { EnvironmentPlugin } = require('webpack');
 
 const workingDirectory = process.env.WORK_DIR
   ? path.resolve(__dirname, process.env.WORK_DIR)
-  : path.resolve(__dirname, "build");
+  : path.resolve(__dirname, 'build');
 
 if (workingDirectory) {
-  console.log(`Working directory set as ${workingDirectory}`)
+  console.log(`Working directory set as ${workingDirectory}`);
 }
 
 const customDistDir = !!process.env.WORK_DIR;
 
-const DEFAULT_NODE_ENV = process.env.BUILD_MODULE ? "production" : process.env.NODE_ENV || "development";
+const DEFAULT_NODE_ENV = process.env.BUILD_MODULE ? 'production' : process.env.NODE_ENV || 'development';
 
-const isDevelopment = DEFAULT_NODE_ENV !== "production";
-const isTest = process.env.TEST_ENV === "true";
+const isDevelopment = DEFAULT_NODE_ENV !== 'production';
+const isTest = process.env.TEST_ENV === 'true';
 
 const BUILD = {
   NO_SERVER: !!process.env.BUILD_NO_MINIMIZATION || !!process.env.BUILD_NO_SERVER,
@@ -33,13 +33,13 @@ const BUILD = {
 };
 
 const dirPrefix = {
-  js: customDistDir ? "js/" : isDevelopment ? "" : "static/js/",
-  css: customDistDir ? "css/" : isDevelopment ? "" : "static/css/",
+  js: customDistDir ? 'js/' : isDevelopment ? '' : 'static/js/',
+  css: customDistDir ? 'css/' : isDevelopment ? '' : 'static/css/',
 };
 
 const LOCAL_ENV = {
   NODE_ENV: DEFAULT_NODE_ENV,
-  CSS_PREFIX: "lsf-",
+  CSS_PREFIX: 'lsf-',
   BUILD_NO_SERVER: BUILD.NO_SERVER,
 };
 
@@ -48,13 +48,13 @@ console.log(LOCAL_ENV);
 const babelOptimizeOptions = () => {
   return BUILD.NO_MINIMIZE
     ? {
-      compact: false,
-      cacheCompression: false,
-    }
+        compact: false,
+        cacheCompression: false,
+      }
     : {
-      compact: true,
-      cacheCompression: true,
-    };
+        compact: true,
+        cacheCompression: true,
+      };
 };
 
 const optimizer = () => {
@@ -72,7 +72,7 @@ const optimizer = () => {
       new CssMinimizerPlugin({
         parallel: true,
       }),
-    )
+    );
   }
 
   if (BUILD.NO_MINIMIZE) {
@@ -82,7 +82,7 @@ const optimizer = () => {
 
   if (BUILD.NO_CHUNKS) {
     result.runtimeChunk = false;
-    result.splitChunks = { cacheGroups: { default: false } }
+    result.splitChunks = { cacheGroups: { default: false } };
   }
 
   return result;
@@ -90,19 +90,19 @@ const optimizer = () => {
 
 const output = () => {
   const result = {
-    filename: "[name]-[contenthash].js",
-    chunkFilename: "[name]-[contenthash]-[id].chunk.js",
+    filename: '[name]-[contenthash].js',
+    chunkFilename: '[name]-[contenthash]-[id].chunk.js',
   };
 
   if (BUILD.NO_HASH) {
-    result.filename = "[name].js";
-    result.chunkFilename = "[name].chunk.js";
+    result.filename = '[name].js';
+    result.chunkFilename = '[name].chunk.js';
   }
 
   if (BUILD.MODULE) {
-    result.library = "LabelStudio";
-    result.libraryExport = "default";
-    result.libraryTarget = "umd";
+    result.library = 'LabelStudio';
+    result.libraryExport = 'default';
+    result.libraryTarget = 'umd';
     result.globalObject = `(typeof self !== 'undefined' ? self : this)`;
   }
 
@@ -114,13 +114,13 @@ const output = () => {
 
 const cssOutput = () => {
   const result = {
-    filename: "[name]-[contenthash].css",
-    chunkFilename: "[name]-[contenthash]-[id].chunk.css",
+    filename: '[name]-[contenthash].css',
+    chunkFilename: '[name]-[contenthash]-[id].chunk.css',
   };
 
   if (BUILD.NO_HASH) {
-    result.filename = "[name].css";
-    result.chunkFilename = "[name].[contenthash:8].chunk.css";
+    result.filename = '[name].css';
+    result.chunkFilename = '[name].[contenthash:8].chunk.css';
   }
 
   result.filename = dirPrefix.css + result.filename;
@@ -130,51 +130,47 @@ const cssOutput = () => {
 };
 
 const babelLoader = {
-  loader: "babel-loader",
+  loader: 'babel-loader',
   options: {
     presets: [
       [
-        "@babel/preset-react",
+        '@babel/preset-react',
         {
-          runtime: "automatic",
+          runtime: 'automatic',
         },
       ],
-      "@babel/preset-typescript",
+      '@babel/preset-typescript',
       [
-        "@babel/preset-env",
+        '@babel/preset-env',
         {
           targets: {
-            browsers: ["last 2 Chrome versions"],
+            browsers: ['last 2 Chrome versions'],
           },
         },
       ],
     ],
     plugins: [
-      "react-hot-loader/babel",
-      "@babel/plugin-proposal-class-properties",
-      "@babel/plugin-proposal-optional-chaining",
-      "@babel/plugin-proposal-nullish-coalescing-operator",
-      ...(
-        isTest
-          ? ["istanbul"]
-          : []
-      )
+      'react-hot-loader/babel',
+      '@babel/plugin-proposal-class-properties',
+      '@babel/plugin-proposal-optional-chaining',
+      '@babel/plugin-proposal-nullish-coalescing-operator',
+      ...(isTest ? ['istanbul'] : []),
     ],
     ...babelOptimizeOptions(),
   },
 };
 
 const cssLoader = (withLocalIdent = true) => {
-  const rules = [{
-    loader: MiniCssExtractPlugin.loader,
-  }];
+  const rules = [
+    {
+      loader: MiniCssExtractPlugin.loader,
+    },
+  ];
 
-  const localIdent = withLocalIdent
-    ? LOCAL_ENV.CSS_PREFIX + "[local]"
-    : "[local]";
+  const localIdent = withLocalIdent ? LOCAL_ENV.CSS_PREFIX + '[local]' : '[local]';
 
   const cssLoader = {
-    loader: "css-loader",
+    loader: 'css-loader',
     options: {
       sourceMap: true,
       modules: {
@@ -184,27 +180,25 @@ const cssLoader = (withLocalIdent = true) => {
   };
 
   const postcssLoader = {
-    loader: "postcss-loader",
+    loader: 'postcss-loader',
     options: {
       sourceMap: true,
       postcssOptions: {
         plugins: [
-          require("autoprefixer")({
-            env: "last 4 version"
-          })
-        ]
-      }
-    }
-  }
+          require('autoprefixer')({
+            env: 'last 4 version',
+          }),
+        ],
+      },
+    },
+  };
 
   const stylusLoader = {
-    loader: "stylus-loader",
+    loader: 'stylus-loader',
     options: {
       sourceMap: true,
       stylusOptions: {
-        import: [
-          path.resolve(__dirname, "./src/themes/default/colors.styl")
-        ],
+        import: [path.resolve(__dirname, './src/themes/default/colors.styl')],
       },
     },
   };
@@ -215,30 +209,32 @@ const cssLoader = (withLocalIdent = true) => {
 };
 
 const devServer = () => {
-  return (DEFAULT_NODE_ENV === 'development' && !BUILD.NO_SERVER) ? {
-    devServer: {
-      compress: true,
-      port: process.env.LSF_PORT ?? 3000,
-      static: {
-        directory: path.join(__dirname, "public")
-      },
-      historyApiFallback: {
-        index: "./public/index.html",
-      },
-      client: {
-        overlay: false,
+  return DEFAULT_NODE_ENV === 'development' && !BUILD.NO_SERVER
+    ? {
+        devServer: {
+          compress: true,
+          port: process.env.LSF_PORT ?? 3000,
+          static: {
+            directory: path.join(__dirname, 'public'),
+          },
+          historyApiFallback: {
+            index: './public/index.html',
+          },
+          client: {
+            overlay: false,
+          },
+        },
       }
-    }
-  } : {};
+    : {};
 };
 
 const plugins = [
   new Dotenv({
-    path: "./.env",
+    path: './.env',
     safe: true,
     silent: true,
     allowEmptyValues: true,
-    defaults: "./.env.defaults",
+    defaults: './.env.defaults',
   }),
   new EnvironmentPlugin(LOCAL_ENV),
   new MiniCssExtractPlugin({
@@ -250,10 +246,10 @@ const plugins = [
 if (!BUILD.NO_SERVER) {
   plugins.push(
     new HtmlWebPackPlugin({
-      title: "Label Studio Frontend",
-      template: "public/index.html",
-    })
-  )
+      title: 'Label Studio Frontend',
+      template: 'public/index.html',
+    }),
+  );
 }
 
 if (!BUILD.MODULE) {
@@ -261,49 +257,49 @@ if (!BUILD.MODULE) {
 }
 
 if (BUILD.NO_CHUNKS) {
-  babelLoader.options.plugins.unshift("babel-plugin-remove-webpack")
+  babelLoader.options.plugins.unshift('babel-plugin-remove-webpack');
 
-  plugins.push(new webpack.optimize.LimitChunkCountPlugin({
-    maxChunks: 1,
-  }));
+  plugins.push(
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1,
+    }),
+  );
 }
 
 if (BUILD.DIAGNOSTICS) {
-  plugins.unshift(
-    new SpeedMeasurePlugin()
-  )
+  plugins.unshift(new SpeedMeasurePlugin());
 }
 
-const sourceMap = isDevelopment ? "cheap-module-source-map" : "source-map";
+const sourceMap = isDevelopment ? 'cheap-module-source-map' : 'source-map';
 
 module.exports = ({ withDevServer = true } = {}) => ({
-  mode: DEFAULT_NODE_ENV || "development",
-  target: process.env.NODE_ENV === "development" ? "web" : "browserslist",
+  mode: DEFAULT_NODE_ENV || 'development',
+  target: process.env.NODE_ENV === 'development' ? 'web' : 'browserslist',
   devtool: sourceMap,
   ...(withDevServer ? devServer() : {}),
   entry: {
-    main: [
-      path.resolve(__dirname, "src/index.js"),
-    ],
+    main: [path.resolve(__dirname, 'src/index.js')],
   },
   output: {
     path: path.resolve(workingDirectory),
-    filename: "main.js",
+    filename: 'main.js',
     ...output(),
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"],
+    extensions: ['.tsx', '.ts', '.js'],
     fallback: {
       fs: false,
       path: false,
       crypto: false,
       worker_threads: false,
-    }
+    },
   },
-  plugins: withDevServer ? [
-    ...plugins,
-    // new webpack.HotModuleReplacementPlugin(),
-  ] : plugins,
+  plugins: withDevServer
+    ? [
+        ...plugins,
+        // new webpack.HotModuleReplacementPlugin(),
+      ]
+    : plugins,
   experiments: {
     syncWebAssembly: true,
     asyncWebAssembly: true,
@@ -324,19 +320,19 @@ module.exports = ({ withDevServer = true } = {}) => ({
     rules: [
       {
         test: /\.jsx?$/i,
-        enforce: "pre",
+        enforce: 'pre',
         exclude: /node_modules/,
-        use: [babelLoader, "source-map-loader"],
+        use: [babelLoader, 'source-map-loader'],
       },
       {
         test: /\.tsx?$/i,
-        enforce: "pre",
+        enforce: 'pre',
         exclude: /node_modules/,
-        use: [babelLoader, "source-map-loader"],
+        use: [babelLoader, 'source-map-loader'],
       },
       {
         test: /\.css$/i,
-        use: [{ loader: MiniCssExtractPlugin.loader }, "css-loader", "postcss-loader"],
+        use: [{ loader: MiniCssExtractPlugin.loader }, 'css-loader', 'postcss-loader'],
       },
       {
         test: /\.styl$/i,
@@ -362,23 +358,23 @@ module.exports = ({ withDevServer = true } = {}) => ({
             },
           },
           {
-            loader: "css-loader",
+            loader: 'css-loader',
             options: {
               sourceMap: true,
               importLoaders: 2,
               esModule: false,
               // exportType: "string",
               modules: {
-                mode: "local",
+                mode: 'local',
                 auto: true,
                 namedExport: false,
-                localIdentName: "[local]--[hash:base64:5]",
+                localIdentName: '[local]--[hash:base64:5]',
               },
             },
           },
-          "postcss-loader",
+          'postcss-loader',
           {
-            loader: "sass-loader",
+            loader: 'sass-loader',
             options: {
               sourceMap: true,
             },
@@ -390,10 +386,10 @@ module.exports = ({ withDevServer = true } = {}) => ({
         exclude: /node_modules/,
         use: [
           {
-            loader: require.resolve("url-loader"),
+            loader: require.resolve('url-loader'),
             options: {
               limit: 200000,
-              encoding: "base64",
+              encoding: 'base64',
             },
           },
         ],
@@ -403,35 +399,41 @@ module.exports = ({ withDevServer = true } = {}) => ({
         exclude: /node_modules/,
         use: [
           {
-            loader: "@svgr/webpack",
+            loader: '@svgr/webpack',
             options: {
               ref: true,
             },
           },
-          "url-loader"
+          'url-loader',
         ],
       },
       {
         test: /\.png$/,
         exclude: /node_modules/,
-        use: [
-          "url-loader"
-        ],
+        use: ['url-loader'],
       },
       {
         test: /\.xml$/,
         exclude: /node_modules/,
-        loader: "url-loader",
+        loader: 'url-loader',
       },
       {
         test: /\.wasm$/,
-        type: "javascript/auto",
-        loader: "file-loader",
+        type: 'javascript/auto',
+        loader: 'file-loader',
         options: {
-          name: "[name].[ext]",
+          name: '[name].[ext]',
           outputPath: dirPrefix.js, // colocate wasm with js
-        }
-      }
+        },
+      },
+      {
+        test: /\.sh$/,
+        use: 'raw-loader',
+        options: {
+          name: '[name].[ext]',
+          outputPath: 'scripts', // colocate wasm with js
+        },
+      },
     ],
   },
 });
