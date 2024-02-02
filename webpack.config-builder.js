@@ -430,14 +430,6 @@ module.exports = ({ withDevServer = true } = {}) => ({
           outputPath: dirPrefix.js, // colocate wasm with js
         },
       },
-      {
-        test: /\.sh$/,
-        use: 'raw-loader',
-        options: {
-          name: '[name].[ext]',
-          outputPath: 'scripts', // colocate wasm with js
-        },
-      },
     ],
   },
 });
