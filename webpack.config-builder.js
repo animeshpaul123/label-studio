@@ -156,9 +156,6 @@ const babelLoader = {
       '@babel/plugin-proposal-optional-chaining',
       '@babel/plugin-proposal-nullish-coalescing-operator',
       ...(isTest ? ['istanbul'] : []),
-      new CopyWebpackPlugin({
-        patterns: [{ from: 'scripts', to: 'scripts' }],
-      }),
     ],
     ...babelOptimizeOptions(),
   },
@@ -245,6 +242,9 @@ const plugins = [
     ...cssOutput(),
   }),
   new webpack.EnvironmentPlugin(LOCAL_ENV),
+  new CopyWebpackPlugin({
+    patterns: [{ from: 'scripts', to: 'scripts' }],
+  }),
 ];
 
 if (!BUILD.NO_SERVER) {
